@@ -1,25 +1,24 @@
-import './globals.css';
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import { ClerkProvider } from '@clerk/nextjs';
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { ClerkWrapper } from "@/components/clerk-wrapper"; // Import the new wrapper
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: 'ONS Energy - Records Management',
-  description: 'Professional energy broker records management system',
-};
+// export const metadata: Metadata = {
+//   title: 'ONS Energy - Records Management',
+//   description: 'Professional energy broker records management system',
+// };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <ClerkProvider>
+    <ClerkWrapper>
       <html lang="en">
         <body className={inter.className}>{children}</body>
       </html>
-    </ClerkProvider>
+    </ClerkWrapper>
   );
 }

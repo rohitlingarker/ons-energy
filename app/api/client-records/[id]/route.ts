@@ -10,9 +10,13 @@ interface CustomSessionClaims extends Record<string, unknown> {
   };
 }
 
+interface RouteContext {
+  params: { id: string };
+}
+
 export async function PUT(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: RouteContext
 ) {
   try {
     const { userId, sessionClaims } = await clerkAuth();
@@ -26,7 +30,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Forbidden: Not an admin' }, { status: 403 });
     }
 
-    const { id } = await context.params;
+    const { id } = context.params;
     const body = await request.json();
     const validatedData = CreateClientRecordSchema.parse(body);
 
@@ -55,7 +59,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: RouteContext
 ) {
   try {
     const { userId, sessionClaims } = await clerkAuth();
@@ -69,13 +73,13 @@ export async function DELETE(
       return NextResponse.json({ error: 'Forbidden: Not an admin' }, { status: 403 });
     }
 
-    const { id } = await context.params;
+    const { id } = context.params;
     const { db } = await connectToDatabase();
     const result = await db.collection('client_records').deleteOne({
       _id: new ObjectId(id)
     });
 
-    if (result.deletedCount === 0) {
+    if (result.deletedCount === 0) { 
       return NextResponse.json({ error: 'Record not found' }, { status: 404 });
     }
 

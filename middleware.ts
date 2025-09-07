@@ -6,10 +6,18 @@ const isAdminRoute = createRouteMatcher([
   '/api/client-records/(.*)'
 ]);
 
+interface CustomSessionClaims {
+  metadata?: {
+    role?: "admin" | "member";
+  };
+}
+
 export default clerkMiddleware(async (auth, req) => {
   if (isAdminRoute(req)) {
-    const { sessionClaims } = auth();
-    if (sessionClaims?.metadata?.role !== 'admin') {
+    const { sessionClaims } = await auth();
+    const customSessionClaims = sessionClaims as CustomSessionClaims;
+
+    if (customSessionClaims?.metadata?.role !== 'admin') {
       const url = new URL('/', req.url);
       return NextResponse.redirect(url);
     }
